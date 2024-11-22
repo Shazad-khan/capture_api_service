@@ -1,9 +1,7 @@
 FROM node:18-slim
 
-# Install Puppeteer dependencies
+# Install dependencies for Puppeteer
 RUN apt-get update && apt-get install -y \
-    wget \
-    ca-certificates \
     fonts-liberation \
     libappindicator3-1 \
     libasound2 \
@@ -29,12 +27,12 @@ WORKDIR /app
 # Copy package.json and package-lock.json
 COPY package.json package-lock.json /app/
 
-# Install dependencies
+# Install Node.js dependencies
 RUN npm ci --omit=dev
 
-# Copy app files
+# Copy application files
 COPY . /app/
 
-# Expose port and run the app
+# Expose application port and start the app
 EXPOSE 3000
 CMD ["node", "api/capture_api_service.js"]

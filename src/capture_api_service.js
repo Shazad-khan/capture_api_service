@@ -66,10 +66,11 @@ async function generateOptimizedLocators(elementHandle, page) {
 app.get('/start-capture', async (req, res) => {
     try {
         console.log('Starting interaction capture...');
+
+        // Launch Puppeteer using bundled Chromium
         browser = await puppeteer.launch({
-            executablePath: '/usr/bin/google-chrome-stable', // System-installed Chrome
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            headless: true, // Use headless mode for cloud environments
+            args: ['--no-sandbox', '--disable-setuid-sandbox'], // Required flags
         });
 
         const page = await browser.newPage();
@@ -84,6 +85,7 @@ app.get('/start-capture', async (req, res) => {
         res.status(500).send('Error starting capture: ' + error.message);
     }
 });
+
 
 // Endpoint to stop capturing actions
 app.get('/stop-capture', async (req, res) => {
