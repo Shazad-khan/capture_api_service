@@ -3,14 +3,13 @@
     "version": "1.0.0",
     "main": "api/capture_api_service.js",
     "scripts": {
-      "start": "node api/capture_api_service.js"
+        "start": "node api/capture_api_service.js"
     },
     "dependencies": {
-      "express": "^4.18.2",
-      "puppeteer": "^21.3.8"
+        "express": "^4.18.2",
+        "puppeteer": "^23.9.0"
     },
     "engines": {
-      "node": ">=18.0.0"
+        "node": ">=18.0.0"
     }
-  }
-  
+}
