@@ -69,7 +69,7 @@ app.get('/start-capture', async (req, res) => {
 
         // Launch Puppeteer using bundled Chromium
         browser = await puppeteer.launch({
-            headless: true, // Use headless mode for cloud environments
+            headless: false, // Use headless mode for cloud environments
             args: ['--no-sandbox', '--disable-setuid-sandbox'], // Required flags
         });
 
