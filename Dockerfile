@@ -1,7 +1,9 @@
 FROM node:18-slim
 
-# Install dependencies for Puppeteer
+# Install required system dependencies for Puppeteer
 RUN apt-get update && apt-get install -y \
+    wget \
+    ca-certificates \
     fonts-liberation \
     libappindicator3-1 \
     libasound2 \
@@ -19,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     libwayland-server0 \
     libatspi2.0-0 \
     libxinerama1 \
+    xvfb \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -33,6 +36,6 @@ RUN npm ci --omit=dev
 # Copy application files
 COPY . /app/
 
-# Expose application port and start the app
+# Expose port and run the app
 EXPOSE 3000
 CMD ["node", "api/capture_api_service.js"]
