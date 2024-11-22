@@ -1,15 +1,13 @@
 const express = require('express');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core'); // Using puppeteer-core for lightweight builds
 const app = express();
-const PORT = process.env.PORT || 9999; // Use dynamic port for Render or default to 9999
 
 let browser;
-let capturedActions = []; // To hold actions in memory
+let capturedActions = []; // Holds the captured user actions
 
-// Utility to generate locators (unchanged)
+// Utility to generate locators (unchanged from original logic)
 async function generateOptimizedLocators(elementHandle, page) {
     const locators = [];
-
     const properties = await page.evaluate((el) => {
         const attributes = Array.from(el.attributes).reduce((acc, attr) => {
             acc[attr.name] = attr.value;
@@ -28,18 +26,15 @@ async function generateOptimizedLocators(elementHandle, page) {
 
     const { id, name, className, ariaLabel } = properties;
 
-    // Add unique locators
+    // Add locators based on unique properties
     if (id) locators.push({ type: 'id', value: `#${id}` });
     if (name) locators.push({ type: 'name', value: `[name="${name}"]` });
     if (ariaLabel) locators.push({ type: 'aria-label', value: `[aria-label="${ariaLabel}"]` });
-
-    // Add class-based selector
     if (className) {
         const classSelector = `.${className.split(' ').join('.')}`;
         locators.push({ type: 'class', value: classSelector });
     }
 
-    // Add XPath
     const xpath = await page.evaluate((el) => {
         const getXPath = (node) => {
             if (node.id) return `//*[@id="${node.id}"]`;
@@ -71,32 +66,19 @@ async function generateOptimizedLocators(elementHandle, page) {
 app.get('/start-capture', async (req, res) => {
     try {
         console.log('Starting interaction capture...');
-
-        // Launch Puppeteer in headless mode for cloud
         browser = await puppeteer.launch({
+            executablePath: '/usr/bin/google-chrome-stable', // System-installed Chrome
             headless: true,
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         });
-        const page = await browser.newPage();
 
-        // Navigate to the target URL
+        const page = await browser.newPage();
         const targetUrl = req.query.url || 'https://example.com';
         await page.goto(targetUrl);
+
         console.log(`Navigated to: ${targetUrl}`);
-
-        // Clear previous actions
         capturedActions = [];
-
-        // Inject event listeners into the page (unchanged logic)
-        const injectEventListeners = async (page) => {
-            console.log('Injecting event listeners...');
-            // Logic for injecting event listeners
-        };
-
-        await injectEventListeners(page);
-
-        console.log('Capture setup complete. Interact with the page to generate events.');
-        res.send(`Capture started on ${targetUrl}. Perform actions in the browser.`);
+        res.send(`Capture started on ${targetUrl}. Interact with the page.`);
     } catch (error) {
         console.error('Error starting capture:', error.message);
         res.status(500).send('Error starting capture: ' + error.message);
@@ -109,12 +91,7 @@ app.get('/stop-capture', async (req, res) => {
         if (browser) {
             await browser.close();
             console.log('Browser closed successfully.');
-
-            res.setHeader('Content-Type', 'application/json');
-            res.send({
-                message: 'Capture stopped successfully.',
-                actions: capturedActions, // Return captured actions directly
-            });
+            res.json({ message: 'Capture stopped successfully.', actions: capturedActions });
         } else {
             res.status(400).send('No active browser session to stop.');
         }
@@ -124,14 +101,13 @@ app.get('/stop-capture', async (req, res) => {
     }
 });
 
-// Endpoint to fetch the captured actions JSON
+// Endpoint to fetch captured actions
 app.get('/fetch-actions', (req, res) => {
     try {
         if (capturedActions.length === 0) {
             res.status(404).send({ error: 'No actions captured yet.' });
         } else {
-            res.setHeader('Content-Type', 'application/json');
-            res.send(capturedActions); // Serve the captured actions
+            res.json(capturedActions);
         }
     } catch (error) {
         console.error('Error fetching actions:', error.message);
@@ -139,4 +115,6 @@ app.get('/fetch-actions', (req, res) => {
     }
 });
 
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+// Start Express server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
