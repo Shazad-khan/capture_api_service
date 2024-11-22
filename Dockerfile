@@ -1,6 +1,6 @@
 FROM node:18-slim
 
-# Install required system dependencies for Puppeteer
+# Install required system dependencies for Puppeteer and Xvfb
 RUN apt-get update && apt-get install -y \
     wget \
     ca-certificates \
@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
     libatspi2.0-0 \
     libxinerama1 \
     xvfb \
+    chromium \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -30,10 +31,10 @@ WORKDIR /app
 # Copy package.json and package-lock.json
 COPY package.json package-lock.json /app/
 
-# Install Node.js dependencies
+# Install dependencies
 RUN npm ci --omit=dev
 
-# Copy application files
+# Copy app files
 COPY . /app/
 
 # Expose port and run the app
