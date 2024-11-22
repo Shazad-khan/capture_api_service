@@ -1,5 +1,5 @@
 const express = require('express');
-const puppeteer = require('puppeteer-core'); // Using puppeteer-core for lightweight builds
+const puppeteer = require('puppeteer'); // Using puppeteer-core for lightweight builds
 const app = express();
 
 let browser;
