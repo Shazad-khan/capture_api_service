@@ -1,11 +1,12 @@
 const express = require('express');
 const puppeteer = require('puppeteer'); // Using puppeteer-core for lightweight builds
+const open = require('open'); // Importing the open library
 const app = express();
 
 let browser;
 let capturedActions = []; // Holds the captured user actions
 
-// Utility to generate locators (unchanged from original logic)
+// Utility to generate locators (unchanged)
 async function generateOptimizedLocators(elementHandle, page) {
     const locators = [];
     const properties = await page.evaluate((el) => {
@@ -26,7 +27,6 @@ async function generateOptimizedLocators(elementHandle, page) {
 
     const { id, name, className, ariaLabel } = properties;
 
-    // Add locators based on unique properties
     if (id) locators.push({ type: 'id', value: `#${id}` });
     if (name) locators.push({ type: 'name', value: `[name="${name}"]` });
     if (ariaLabel) locators.push({ type: 'aria-label', value: `[aria-label="${ariaLabel}"]` });
@@ -84,13 +84,16 @@ app.get('/start-capture', async (req, res) => {
 
         console.log(`Navigated to: ${targetUrl}`);
         capturedActions = [];
-        res.send(`Capture started on ${targetUrl}. Interact with the page.`);
+
+        // Open the target URL in the user's default browser
+        await open(targetUrl);
+
+        res.send(`Capture started on ${targetUrl}. Browser opened for interaction.`);
     } catch (error) {
         console.error('Error starting capture:', error.message);
         res.status(500).send('Error starting capture: ' + error.message);
     }
 });
-
 
 // Endpoint to stop capturing actions
 app.get('/stop-capture', async (req, res) => {
