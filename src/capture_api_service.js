@@ -1,6 +1,7 @@
-const express = require('express');
-const puppeteer = require('puppeteer'); // Using puppeteer-core for lightweight builds
-const open = require('open'); // Importing the open library
+import express from 'express';
+import puppeteer from 'puppeteer';
+import open from 'open';
+
 const app = express();
 
 let browser;

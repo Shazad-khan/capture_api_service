@@ -2,6 +2,7 @@
     "name": "capture-api-service",
     "version": "1.0.0",
     "main": "api/capture_api_service.js",
+    "type": "module",
     "scripts": {
         "start": "node api/capture_api_service.js"
     },
