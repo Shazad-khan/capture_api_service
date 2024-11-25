@@ -68,9 +68,9 @@ app.get('/start-capture', async (req, res) => {
     try {
         console.log('Starting interaction capture...');
 
-        // Launch Puppeteer using bundled Chromium
+        // Launch Puppeteer in non-headless mode for interaction
         browser = await puppeteer.launch({
-            headless: true, // Keep headless for cloud
+            headless: false, // Ensure the browser opens visibly
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -84,10 +84,7 @@ app.get('/start-capture', async (req, res) => {
         await page.goto(targetUrl);
 
         console.log(`Navigated to: ${targetUrl}`);
-        capturedActions = [];
-
-        // Open the target URL in the user's default browser
-        await open(targetUrl, { app: { arguments: '--new-window' } });
+        capturedActions = []; // Reset captured actions
 
         res.send(`Capture started on ${targetUrl}. Browser opened for interaction.`);
     } catch (error) {
@@ -95,6 +92,7 @@ app.get('/start-capture', async (req, res) => {
         res.status(500).send('Error starting capture: ' + error.message);
     }
 });
+
 
 // Endpoint to stop capturing actions
 app.get('/stop-capture', async (req, res) => {
