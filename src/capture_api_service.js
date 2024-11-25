@@ -87,7 +87,7 @@ app.get('/start-capture', async (req, res) => {
         capturedActions = [];
 
         // Open the target URL in the user's default browser
-        await open(targetUrl);
+        await open(targetUrl, { app: { arguments: '--new-window' } });
 
         res.send(`Capture started on ${targetUrl}. Browser opened for interaction.`);
     } catch (error) {
