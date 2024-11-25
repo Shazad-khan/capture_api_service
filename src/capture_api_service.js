@@ -1,6 +1,5 @@
 import express from 'express';
 import puppeteer from 'puppeteer';
-import open from 'open';
 
 const app = express();
 
@@ -92,7 +91,6 @@ app.get('/start-capture', async (req, res) => {
         res.status(500).send('Error starting capture: ' + error.message);
     }
 });
-
 
 // Endpoint to stop capturing actions
 app.get('/stop-capture', async (req, res) => {
