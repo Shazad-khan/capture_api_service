@@ -1,10 +1,11 @@
 # Use a Node.js base image
 FROM node:16
 
-# Install Xvfb, xauth, and Chromium dependencies
+# Install Xvfb, xauth, x11-utils, and Chromium dependencies
 RUN apt-get update && apt-get install -y \
     xvfb \
     xauth \
+    x11-utils \
     libnss3 \
     libatk1.0-0 \
     libatk-bridge2.0-0 \
