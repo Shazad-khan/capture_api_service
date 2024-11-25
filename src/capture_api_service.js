@@ -67,9 +67,9 @@ app.get('/start-capture', async (req, res) => {
     try {
         console.log('Starting interaction capture...');
 
-        // Launch Puppeteer in non-headless mode for interaction
+        // Launch Puppeteer with Xvfb
         browser = await puppeteer.launch({
-            headless: false, // Ensure the browser opens visibly
+            headless: false, // Non-headless mode to allow interaction
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',

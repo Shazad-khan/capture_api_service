@@ -1,42 +1,37 @@
-FROM node:18-slim
+# Use a Node.js base image
+FROM node:16
 
-# Install required system dependencies for Puppeteer and Xvfb
+# Install Xvfb and Chromium dependencies
 RUN apt-get update && apt-get install -y \
-    wget \
-    ca-certificates \
+    xvfb \
+    libnss3 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libxcomposite1 \
+    libxrandr2 \
+    libxdamage1 \
+    libpango1.0-0 \
+    libgbm1 \
+    libasound2 \
     fonts-liberation \
     libappindicator3-1 \
-    libasound2 \
-    libatk-bridge2.0-0 \
-    libgtk-3-0 \
-    libx11-xcb1 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxrandr2 \
-    libgbm1 \
-    libnss3 \
-    libxcursor1 \
-    libxss1 \
-    libwayland-client0 \
-    libwayland-server0 \
-    libatspi2.0-0 \
-    libxinerama1 \
-    xvfb \
-    chromium \
-    && rm -rf /var/lib/apt/lists/*
+    xdg-utils \
+    --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set working directory
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
-COPY package.json package-lock.json /app/
+# Copy application code
+COPY . .
 
 # Install dependencies
-RUN npm ci --omit=dev
+RUN npm install
 
-# Copy app files
-COPY . /app/
+# Add Puppeteer environment configuration
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV DISPLAY=:99
 
-# Expose port and run the app
-EXPOSE 3000
-CMD ["node", "api/capture_api_service.js"]
+# Start the application with Xvfb
+CMD ["xvfb-run", "-a", "node", "src/capture_api_service.js"]
